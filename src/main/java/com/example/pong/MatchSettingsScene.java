@@ -109,7 +109,8 @@ public class MatchSettingsScene { // сцена с настройками мат
         String player2Name = (mode == GameMode.PVP) ? name2 : "Bot";
         int goal = Integer.parseInt(goalText);
 
-        GameConfig config = new GameConfig(GAME_WIDTH, GAME_HEIGHT, name1, player2Name, goal, mode);
+        ControlType controlType = GameControlsSettings.getPlayer2Control();
+        GameConfig config = new GameConfig(GAME_WIDTH, GAME_HEIGHT, name1, player2Name, goal, mode, controlType);
 
         sceneManager.showGame(config);
     }
