@@ -39,16 +39,19 @@ public class GameLogic { // связывает все компоненты иг�
         this.lowerWall = new Wall(height - Wall.getHeight(), width);
 
         this.collisionSystem = new CollisionSystem();
+        this.inputHandler = new InputHandler();
         if (config.getMode() == GameMode.PVP) {
             this.leftController = new PlayerController(true);
-            this.rightController = new PlayerController(false);
+            switch (config.getControlType()) {
+                case SCROLL -> this.rightController = new ScrollController(inputHandler);
+                default -> this.rightController = new PlayerController(false);
+            }
         } else {
             this.leftController = new PlayerController(true);
             this.rightController = new BotController();
         }
         this.scoreLogic = new ScoreLogic();
         this.scoreboard = new Scoreboard(config.getPlayer1Name(), config.getPlayer2Name());
-        this.inputHandler = new InputHandler();
         this.gameState = new GameState();
         this.gameLoop = new GameLoop(this);
         this.serveLogic = new ServeLogic(width, height, ball, leftRacquet, rightRacquet, gameState, inputHandler);
@@ -67,9 +70,18 @@ public class GameLogic { // связывает все компоненты иг�
         rightController.update(rightRacquet, ball, inputHandler.getKeysPressed());
         if (gameState.isServing()) {
             serveLogic.updateBallForServe();
-            KeyCode serveKey = getServeKey();
-            if (serveKey != null) {
-                serveLogic.handleServeInput(serveKey);
+            int server = gameState.getServingPlayer();
+            if (server == 2 && rightController instanceof ScrollController) {
+                serveLogic.handleServeInputByMouse();
+            } else if (server == 2 && rightController instanceof BotController) {
+                if (Math.random() < 0.02) {
+                    serveLogic.handleServeInputByBot();
+                }
+            } else {
+                KeyCode serveKey = getServeKey();
+                if (serveKey != null) {
+                    serveLogic.handleServeInput(serveKey);
+                }
             }
             return;
         }

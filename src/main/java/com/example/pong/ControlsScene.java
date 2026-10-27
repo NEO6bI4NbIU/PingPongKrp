@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -21,7 +22,6 @@ public class ControlsScene { // меню с показом клавиш упра
     private static final Color BG_COLOR = Color.web("#777B7E");
     private static final String FONT_FAMILY = "Arial";
     private static final int TITLE_FONT_SIZE = 30;
-    private static final int HEADER_FONT_SIZE = 22;
     private static final int TEXT_FONT_SIZE = 18;
     private static final int SPACING = 15;
 
@@ -32,20 +32,26 @@ public class ControlsScene { // меню с показом клавиш упра
         titleLabel.setFont(new Font(FONT_FAMILY, TITLE_FONT_SIZE));
         titleLabel.setTextFill(Color.WHITE);
 
-        VBox player1Panel = createControlPanel("Player 1",
+        VBox player1Panel = ControlPanelFactory.createPanel("Player 1",
                 "Q — up",
                 "Z — down",
                 "A — serve"
         );
 
-        VBox player2Panel = createControlPanel("Player 2",
-                "O — up",
-                "M — down",
-                "K — serve"
-        );
+        VBox player2Panel = ControlPanelFactory.createPanel("Player 2", "");
+        ControlPanelFactory.updatePlayer2Panel(player2Panel, GameControlsSettings.getPlayer2Control());
 
         HBox controlsBox = new HBox(80, player1Panel, player2Panel);
         controlsBox.setAlignment(Pos.CENTER);
+
+        ChoiceBox<ControlType> controlChoiceBox = new ChoiceBox<>();
+        controlChoiceBox.getItems().addAll(ControlType.values());
+        controlChoiceBox.setValue(GameControlsSettings.getPlayer2Control());
+
+        controlChoiceBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            ControlPanelFactory.updatePlayer2Panel(player2Panel, newVal);
+            GameControlsSettings.setPlayer2Control(newVal);
+        });
 
         Label tipLabel = new Label("Press Enter to serve in the first round. After a goal, the player who conceded serves.");
         tipLabel.setFont(new Font(FONT_FAMILY, TEXT_FONT_SIZE));
@@ -63,7 +69,7 @@ public class ControlsScene { // меню с показом клавиш упра
         ));
         root.setTop(titleLabel);
         root.setCenter(controlsBox);
-        root.setBottom(new VBox(SPACING, tipLabel, backButton));
+        root.setBottom(new VBox(SPACING, controlChoiceBox, tipLabel, backButton));
 
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
         BorderPane.setMargin(titleLabel, new Insets(20));
@@ -74,26 +80,6 @@ public class ControlsScene { // меню с показом клавиш упра
         bottomBox.setPadding(new Insets(20));
 
         this.scene = new Scene(root, WIDTH, HEIGHT);
-    }
-
-    private VBox createControlPanel(String title, String... lines) {
-        Label titleLabel = new Label(title);
-        titleLabel.setFont(new Font(FONT_FAMILY, HEADER_FONT_SIZE));
-        titleLabel.setTextFill(Color.WHITE);
-        titleLabel.setStyle("-fx-background-color: RGBA(0, 0, 0, 0.3); -fx-padding: 5 15;");
-
-        VBox panel = new VBox(SPACING);
-        panel.setAlignment(Pos.CENTER);
-        panel.getChildren().add(titleLabel);
-
-        for (String line : lines) {
-            Label label = new Label(line);
-            label.setFont(new Font(FONT_FAMILY, TEXT_FONT_SIZE));
-            label.setTextFill(Color.WHITE);
-            panel.getChildren().add(label);
-        }
-
-        return panel;
     }
 
     public Scene getScene() {

@@ -69,6 +69,16 @@ public class ServeLogic { // логика подачи мяча
             inputHandler.getKeysPressed().remove(serveKey);
         }
     }
+    public void handleServeInputByMouse() {
+        if (inputHandler.isMouseClicked()) {
+            launchServe();
+            inputHandler.clearMouseClick();
+        }
+    }
+
+    public void handleServeInputByBot() {
+        launchServe();
+    }
 
     private void launchServe() {
         int server = gameState.getServingPlayer();
