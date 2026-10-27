@@ -48,7 +48,7 @@ public class GameLogic { // связывает все компоненты иг�
             }
         } else {
             this.leftController = new PlayerController(true);
-            this.rightController = new BotController();
+            this.rightController = new BotController(height);
         }
         this.scoreLogic = new ScoreLogic();
         this.scoreboard = new Scoreboard(config.getPlayer1Name(), config.getPlayer2Name());
