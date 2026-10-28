@@ -7,6 +7,7 @@ public class GameLogic { // связывает все компоненты иг�
     private final double width;
     private final double height;
     private final int goal;
+    private boolean isArcade;
     private static final double RACQUET_MARGIN = 10;
     private final Ball ball;
     private final Racquet leftRacquet;
@@ -28,6 +29,7 @@ public class GameLogic { // связывает все компоненты иг�
         this.width = config.getWidth();
         this.height = config.getHeight();
         this.goal = config.getGoal();
+        this.isArcade = (config.getGameMode() == GameMode.ARCADE);
         double racquetMinY = Wall.getHeight();
         double racquetMaxY = height - Wall.getHeight();
         double racquetStartY = height / 2 - Racquet.DEFAULT_HEIGHT / 2;
@@ -40,15 +42,15 @@ public class GameLogic { // связывает все компоненты иг�
 
         this.collisionSystem = new CollisionSystem();
         this.inputHandler = new InputHandler();
-        if (config.getMode() == GameMode.PVP) {
+        if (config.getOpponentType() == OpponentType.BOT) {
+            this.leftController = new PlayerController(true);
+            this.rightController = new BotController(height);
+        } else {
             this.leftController = new PlayerController(true);
             switch (config.getControlType()) {
                 case SCROLL -> this.rightController = new ScrollController(inputHandler);
                 default -> this.rightController = new PlayerController(false);
             }
-        } else {
-            this.leftController = new PlayerController(true);
-            this.rightController = new BotController(height);
         }
         this.scoreLogic = new ScoreLogic();
         this.scoreboard = new Scoreboard(config.getPlayer1Name(), config.getPlayer2Name());
@@ -87,7 +89,10 @@ public class GameLogic { // связывает все компоненты иг�
         }
 
         ball.move();
-        collisionSystem.check(ball, upperWall, lowerWall, leftRacquet, rightRacquet);
+        boolean hitRacquet = collisionSystem.check(ball, upperWall, lowerWall, leftRacquet, rightRacquet);
+        if (hitRacquet && isArcade) {
+            ball.speedUp();
+        }
 
         int scorer = scoreLogic.update(ball, width);
         if (scorer != 0) {

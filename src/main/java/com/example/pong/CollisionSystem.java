@@ -5,9 +5,10 @@ import javafx.scene.shape.Shape;
 
 public class CollisionSystem { // проверяет коллизии между мячом, стенами и ракеткой. Вызывает отскоки у мяча
 
-    public void check(Ball ball, Wall upperWall, Wall lowerWall,
+    public boolean check(Ball ball, Wall upperWall, Wall lowerWall,
                       Racquet leftRacquet, Racquet rightRacquet) {
 
+        boolean hitRacquet = false;
         if (collides(ball.getCircle(), upperWall.getRectangle())) {
             ball.bounceY();
             ball.setCenterY(upperWall.getRectangle().getY() // корректирую позицию, чтобы мяч не "залип" в стене
@@ -22,11 +23,14 @@ public class CollisionSystem { // проверяет коллизии между
 
         if (ball.getDx() < 0 && collides(ball.getCircle(), leftRacquet.getRectangle())) {
             handleRacquetHit(ball, leftRacquet, true);
+            hitRacquet = true;
         }
 
         if (ball.getDx() > 0 && collides(ball.getCircle(), rightRacquet.getRectangle())) {
             handleRacquetHit(ball, rightRacquet, false);
+            hitRacquet = true;
         }
+        return hitRacquet;
     }
 
 

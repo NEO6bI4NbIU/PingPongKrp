@@ -29,6 +29,7 @@ public class MatchSettingsScene { // сцена с настройками мат
     private final TextField name1Field;
     private final TextField name2Field;
     private final TextField goalField;
+    private final ChoiceBox<OpponentType> opponentChoiceBox;
     private final ChoiceBox<GameMode> modeChoiceBox;
     private final Label errorLabel;
     private final Label name2Label;
@@ -38,25 +39,31 @@ public class MatchSettingsScene { // сцена с настройками мат
         name2Field = createTextField("Player 2 name");
         goalField = createTextField("Score to win");
 
+        opponentChoiceBox = new ChoiceBox<>();
+        opponentChoiceBox.getItems().addAll(OpponentType.values());
+        opponentChoiceBox.setValue(OpponentType.PLAYER);
+
         modeChoiceBox = new ChoiceBox<>();
         modeChoiceBox.getItems().addAll(GameMode.values());
-        modeChoiceBox.setValue(GameMode.PVP);
+        modeChoiceBox.setValue(GameMode.CLASSIC);
 
         Label name1Label = createLabel("Player 1");
         name2Label = createLabel("Player 2");
         Label goalLabel = createLabel("Score to win");
+        Label opponentLabel = createLabel("Opponent");
         Label modeLabel = createLabel("Mode");
 
-        modeChoiceBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            boolean isPvp = newVal == GameMode.PVP;
-            name2Label.setVisible(isPvp);
-            name2Field.setVisible(isPvp);
+        opponentChoiceBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            boolean isPlayer = (newVal == OpponentType.PLAYER);
+            name2Label.setVisible(isPlayer);
+            name2Field.setVisible(isPlayer);
         });
 
         errorLabel = new Label();
         errorLabel.setTextFill(Color.RED);
         errorLabel.setFont(new Font(FONT_FAMILY, FONT_SIZE));
         errorLabel.setVisible(false);
+        errorLabel.setWrapText(true);
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> sceneManager.showMainMenu());
@@ -65,7 +72,7 @@ public class MatchSettingsScene { // сцена с настройками мат
         HBox buttonBox = new HBox(SPACING, backButton, startButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        VBox form = new VBox(SPACING, name1Label, name1Field, name2Label, name2Field, goalLabel, goalField, modeLabel, modeChoiceBox, errorLabel, buttonBox);
+        VBox form = new VBox(SPACING, name1Label, name1Field, name2Label, name2Field, goalLabel, goalField,opponentLabel, opponentChoiceBox, modeLabel, modeChoiceBox, errorLabel, buttonBox);
         form.setAlignment(Pos.CENTER);
         form.setMaxWidth(400);
 
@@ -97,20 +104,22 @@ public class MatchSettingsScene { // сцена с настройками мат
         String name1 = name1Field.getText().trim();
         String name2 = name2Field.getText().trim();
         String goalText = goalField.getText().trim();
-        GameMode mode = modeChoiceBox.getValue();
+        OpponentType opponentType = opponentChoiceBox.getValue();
+        GameMode gameMode = modeChoiceBox.getValue();
 
-        String error = MatchSettingsValidator.validate(name1, name2, goalText, mode);
+
+        String error = MatchSettingsValidator.validate(name1, name2, goalText, opponentType);
         if (error != null) {
             errorLabel.setText(error);
             errorLabel.setVisible(true);
             return;
         }
 
-        String player2Name = (mode == GameMode.PVP) ? name2 : "Bot";
+        String player2Name = (opponentType == OpponentType.PLAYER) ? name2 : "Bot";
         int goal = Integer.parseInt(goalText);
 
         ControlType controlType = GameControlsSettings.getPlayer2Control();
-        GameConfig config = new GameConfig(GAME_WIDTH, GAME_HEIGHT, name1, player2Name, goal, mode, controlType);
+        GameConfig config = new GameConfig(GAME_WIDTH, GAME_HEIGHT, name1, player2Name, goal,opponentType, gameMode, controlType);
 
         sceneManager.showGame(config);
     }

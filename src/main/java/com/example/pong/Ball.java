@@ -7,11 +7,13 @@ public class Ball { // создание мяча
 
     private static final double RADIUS = 10;
     private static final Color COLOR = Color.BLUE;
-    private static final double SPEED = 3.0;
+    private static final double BASE_SPEED = 3.0;
+    private static final double MAX_MULTIPLIER = 5.0;
 
     private final Circle circle;
     private double dx;
     private double dy;
+    private double speedMultiplier = 1.0;
 
     public Ball(double startX, double startY) {
         this.circle = new Circle(startX, startY, RADIUS, COLOR);
@@ -24,8 +26,16 @@ public class Ball { // создание мяча
     }
 
     public void move() {
-        circle.setCenterX(circle.getCenterX() + dx);
-        circle.setCenterY(circle.getCenterY() + dy);
+        circle.setCenterX(circle.getCenterX() + dx * speedMultiplier);
+        circle.setCenterY(circle.getCenterY() + dy * speedMultiplier);
+    }
+
+    public void speedUp() {
+        speedMultiplier = Math.min(speedMultiplier + 0.1, MAX_MULTIPLIER);
+    }
+
+    public void resetSpeed() {
+        speedMultiplier = 1.0;
     }
 
     public void bounceX() {dx = -dx;}
@@ -41,8 +51,9 @@ public class Ball { // создание мяча
         if (Math.random() < 0.5) {                // случайно вверх или вниз
             angle = -angle;
         }
-        this.dx = SPEED * directionX * Math.cos(angle);
-        this.dy = SPEED * Math.sin(angle);
+        this.dx = BASE_SPEED * directionX * Math.cos(angle);
+        this.dy = BASE_SPEED * Math.sin(angle);
+        resetSpeed();
     }
 
     public void stop() {
