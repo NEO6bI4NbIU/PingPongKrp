@@ -14,6 +14,7 @@ public class Ball { // создание мяча
     private double dx;
     private double dy;
     private double speedMultiplier = 1.0;
+    private double zoneMultiplier = 1.0;
 
     public Ball(double startX, double startY) {
         this.circle = new Circle(startX, startY, RADIUS, COLOR);
@@ -25,9 +26,9 @@ public class Ball { // создание мяча
         return circle;
     }
 
-    public void move() {
-        circle.setCenterX(circle.getCenterX() + dx * speedMultiplier);
-        circle.setCenterY(circle.getCenterY() + dy * speedMultiplier);
+    public void move(double deltaTime) {
+        circle.setCenterX(circle.getCenterX() + dx * speedMultiplier * zoneMultiplier * deltaTime * 60);
+        circle.setCenterY(circle.getCenterY() + dy * speedMultiplier * zoneMultiplier * deltaTime * 60);
     }
 
     public void speedUp() {
@@ -36,6 +37,10 @@ public class Ball { // создание мяча
 
     public void resetSpeed() {
         speedMultiplier = 1.0;
+    }
+
+    public void setZoneMultiplier(double multiplier) {
+        this.zoneMultiplier = multiplier;
     }
 
     public void bounceX() {dx = -dx;}
@@ -66,4 +71,6 @@ public class Ball { // создание мяча
     public double getRadius() { return RADIUS; }
     public double getDx() { return dx; }
     public double getDy() { return dy; }
+    public void setDx(double dx) { this.dx = dx; }
+    public void setDy(double dy) { this.dy = dy; }
 }

@@ -9,8 +9,9 @@ public class GameConfig { // параметры для начала матча
     private final int goal;
     private final GameMode gameMode;
     private final ControlType controlType;
+    private final Arena arena;
 
-    public GameConfig(double width, double height, String player1Name, String player2Name, int goal, OpponentType opponentType, GameMode gameMode, ControlType controlType) {
+    public GameConfig(double width, double height, String player1Name, String player2Name, int goal, OpponentType opponentType, GameMode gameMode, ControlType controlType, Arena arena) {
         this.width = width;
         this.height = height;
         this.player1Name = player1Name;
@@ -19,6 +20,7 @@ public class GameConfig { // параметры для начала матча
         this.opponentType = opponentType;
         this.gameMode = gameMode;
         this.controlType = controlType;
+        this.arena = arena;
     }
 
     public double getWidth() { return width; }
@@ -29,4 +31,5 @@ public class GameConfig { // параметры для начала матча
     public OpponentType getOpponentType() { return opponentType; }
     public GameMode getGameMode() { return gameMode; }
     public ControlType getControlType() { return controlType; }
+    public Arena getArena() { return arena; }
 }

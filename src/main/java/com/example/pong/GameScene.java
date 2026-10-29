@@ -3,6 +3,7 @@ package com.example.pong;
 import javafx.scene.layout.Pane;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Shape;
 
 public class GameScene { // игровая сцена (сцена матча)
 
@@ -29,6 +30,12 @@ public class GameScene { // игровая сцена (сцена матча)
             root.setTranslateY((newHeight - height * scale) / 2);           надо будет реализовать возможность изменения размера окна
         }*/
 
+        for (Shape obstacle : config.getArena().getObstacles()) {
+            gameField.getChildren().add(obstacle);
+        }
+        for (Zone zone : config.getArena().getZones()) {
+            gameField.getChildren().add(zone.getArea());
+        }
         gameField.getChildren().addAll(gameLogic.getBall().getCircle(),
                 gameLogic.getUpperWall().getRectangle(),
                 gameLogic.getLowerWall().getRectangle(),
@@ -49,6 +56,6 @@ public class GameScene { // игровая сцена (сцена матча)
 
     public void stop() {gameLogic.stop();}
 
-    public void update() {gameLogic.update();}
+    public void update(double deltaTime) {gameLogic.update(deltaTime);}
 
 }
