@@ -1,9 +1,9 @@
 package com.example.pong;
 
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.Rectangle;
 
 public class MovingObstacle {
-    private final Shape shape;
+    private final Rectangle rectangle;
     private final double axis;       // 0 = X, 1 = Y, движение либо по X, либо по Y
     private final double amplitude;
     private final double speed;
@@ -11,13 +11,13 @@ public class MovingObstacle {
     private double time = 0;
     private final double fieldWidth, fieldHeight;
 
-    public MovingObstacle(Shape shape, double axis, double amplitude, double speed, double fieldWidth, double fieldHeight) {
-        this.shape = shape;
+    public MovingObstacle(Rectangle rectangle, double axis, double amplitude, double speed, double fieldWidth, double fieldHeight) {
+        this.rectangle = rectangle;
         this.axis = axis;
         this.amplitude = amplitude;
         this.speed = speed;
-        this.baseX = shape.getLayoutX();
-        this.baseY = shape.getLayoutY();
+        this.baseX = rectangle.getX();
+        this.baseY = rectangle.getY();
         this.fieldWidth = fieldWidth;
         this.fieldHeight = fieldHeight;
     }
@@ -27,20 +27,21 @@ public class MovingObstacle {
         double offset = Math.sin(time * speed) * amplitude;
         if (axis == 0) {
             double newX = baseX + offset;
-            newX = Math.max(0, Math.min(newX, fieldWidth - shape.getBoundsInLocal().getWidth()));
-            shape.setLayoutX(newX);
+            newX = Math.max(0, Math.min(newX, fieldWidth - rectangle.getWidth()));
+            rectangle.setX(newX);;
         } else {
             double newY = baseY + offset;
-            newY = Math.max(0, Math.min(newY, fieldHeight - shape.getBoundsInLocal().getHeight()));
-            shape.setLayoutY(newY);
+            newY = Math.max(0, Math.min(newY, fieldHeight - rectangle.getHeight()));
+            rectangle.setY(newY);
         }
     }
 
     public void reset() {
         time = 0;
-        shape.setLayoutX(baseX);
-        shape.setLayoutY(baseY);
+        rectangle.setX(baseX);
+        rectangle.setY(baseY);
     }
 
-    public Shape getShape() { return shape; }
+    public Rectangle getRectangle() { return rectangle; }
+
 }
