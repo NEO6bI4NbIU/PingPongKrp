@@ -45,6 +45,13 @@ public class Ball { // создание мяча
 
     public void bounceX() {dx = -dx;}
     public void bounceY() {dy = -dy;}
+    public void reflect(double nx, double ny) {  // отскок от "сложных"(круги, треугольники) поверхностей
+        double dot = dx * nx + dy * ny;
+        if (dot < 0) {  // мяч летит в сторону поверхности
+            dx = dx - 2 * dot * nx;
+            dy = dy - 2 * dot * ny;
+        }
+    }
     public void setCenterX(double x) {circle.setCenterX(x);}
     public void setCenterY(double y) {circle.setCenterY(y);}
 

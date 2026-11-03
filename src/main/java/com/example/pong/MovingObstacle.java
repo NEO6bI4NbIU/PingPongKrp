@@ -42,6 +42,22 @@ public class MovingObstacle {
         rectangle.setY(baseY);
     }
 
+    public double getMinX() {
+        return axis == 0 ? baseX - amplitude : baseX;
+    }
+
+    public double getMaxX() {
+        return axis == 0 ? baseX + amplitude + rectangle.getWidth() : baseX + rectangle.getWidth();
+    }
+
+    public double getMinY() {
+        return axis == 1 ? baseY - amplitude : baseY;
+    }
+
+    public double getMaxY() {
+        return axis == 1 ? baseY + amplitude + rectangle.getHeight() : baseY + rectangle.getHeight();
+    }
+
     public Rectangle getRectangle() { return rectangle; }
 
 }

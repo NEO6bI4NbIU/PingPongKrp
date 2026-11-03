@@ -34,16 +34,12 @@ public class ObstacleCollisionHandler {
         double dy = ball.getCenterY() - circle.getCenterY();
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance == 0) return;
+        if (distance < 0.001) return;
 
         double nx = dx / distance;  // нормаль от центра круга к мячу
         double ny = dy / distance;
 
-        double dot = ball.getDx() * nx + ball.getDy() * ny; // отражение скорости относительно нормали
-        if (dot < 0) {  // мяч летит в сторону круга
-            ball.setDx(ball.getDx() - 2 * dot * nx);
-            ball.setDy(ball.getDy() - 2 * dot * ny);
-        }
+        ball.reflect(nx, ny);
 
         double newX = circle.getCenterX() + nx * (circle.getRadius() + ball.getRadius());
         double newY = circle.getCenterY() + ny * (circle.getRadius() + ball.getRadius());
@@ -67,16 +63,12 @@ public class ObstacleCollisionHandler {
         double dy = ball.getCenterY() - closestY;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance == 0) return;
+        if (distance < 0.001) return;
 
         double nx = dx / distance;
         double ny = dy / distance;
 
-        double dot = ball.getDx() * nx + ball.getDy() * ny;
-        if (dot < 0) {
-            ball.setDx(ball.getDx() - 2 * dot * nx);
-            ball.setDy(ball.getDy() - 2 * dot * ny);
-        }
+        ball.reflect(nx, ny);
 
         double newX = closestX + nx * ball.getRadius();
         double newY = closestY + ny * ball.getRadius();

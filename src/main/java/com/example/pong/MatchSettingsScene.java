@@ -10,7 +10,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 public class MatchSettingsScene { // сцена с настройками матча
     private static final double WIDTH = 854;
@@ -18,10 +17,6 @@ public class MatchSettingsScene { // сцена с настройками мат
     private static final double GAME_WIDTH = 854;
     private static final double GAME_HEIGHT = 480;
     private static final Color BG_COLOR = Color.web("#777B7E");
-    private static final int SPACING = 15;
-    private static final int FONT_SIZE = 18;
-    private static final String FONT_FAMILY = "Arial";
-    private static final double FIELD_WIDTH = 400;
 
     private final Scene scene;
     private final TextField name1Field;
@@ -36,30 +31,18 @@ public class MatchSettingsScene { // сцена с настройками мат
     private final Label name2Label;
 
     public MatchSettingsScene(SceneManager sceneManager) {
-        name1Field = createTextField("Player 1 name");
-        name2Field = createTextField("Player 2 name");
-        goalField = createTextField("Score to win");
+        name1Field = MatchSettingsFactory.createTextField("Player 1 name");
+        name2Field = MatchSettingsFactory.createTextField("Player 2 name");
+        goalField = MatchSettingsFactory.createTextField("Score to win");
 
-        opponentChoiceBox = createChoiceBox(OpponentType.values(), OpponentType.PLAYER);
-        modeChoiceBox = createChoiceBox(GameMode.values(), GameMode.CLASSIC);
-        modeChoiceBox.setMaxWidth(140);
+        opponentChoiceBox = MatchSettingsFactory.createChoiceBox(OpponentType.values(), OpponentType.PLAYER, 400);
+        modeChoiceBox = MatchSettingsFactory.createChoiceBox(GameMode.values(), GameMode.CLASSIC,140 );
 
-        circlesCheckBox = new CheckBox("Circles");
-        circlesCheckBox.setTextFill(Color.WHITE);
-        circlesCheckBox.setFont(new Font(FONT_FAMILY, FONT_SIZE));
-        movingBarCheckBox = new CheckBox("Moving Bar");
-        movingBarCheckBox.setTextFill(Color.WHITE);
-        movingBarCheckBox.setFont(new Font(FONT_FAMILY, FONT_SIZE));
-        speedZonesCheckBox = new CheckBox("Speed Zones");
-        speedZonesCheckBox.setTextFill(Color.WHITE);
-        speedZonesCheckBox.setFont(new Font(FONT_FAMILY, FONT_SIZE));
+        circlesCheckBox = MatchSettingsFactory.createCheckBox("Circles");
+        movingBarCheckBox = MatchSettingsFactory.createCheckBox("Moving Bar");
+        speedZonesCheckBox = MatchSettingsFactory.createCheckBox("Speed Zones");
 
-        Label name1Label = createLabel("Player 1");
-        name2Label = createLabel("Player 2");
-        Label goalLabel = createLabel("Score to win");
-        Label opponentLabel = createLabel("Opponent");
-        Label modeLabel = createLabel("Mode");
-        Label arenaLabel = createLabel("Arena");
+        name2Label = MatchSettingsFactory.createLabel("Player 2");
 
         opponentChoiceBox.valueProperty().addListener((obs, oldVal, newVal) -> {
             boolean isPlayer = (newVal == OpponentType.PLAYER);
@@ -69,7 +52,6 @@ public class MatchSettingsScene { // сцена с настройками мат
 
         errorLabel = new Label();
         errorLabel.setTextFill(Color.RED);
-        errorLabel.setFont(new Font(FONT_FAMILY, FONT_SIZE));
         errorLabel.setVisible(false);
         errorLabel.setWrapText(true);
 
@@ -77,30 +59,15 @@ public class MatchSettingsScene { // сцена с настройками мат
         backButton.setOnAction(e -> sceneManager.showMainMenu());
         Button startButton = new Button("Start");
         startButton.setOnAction(e -> startGame(sceneManager));
-        HBox buttonBox = new HBox(SPACING, backButton, startButton);
+        HBox buttonBox = new HBox(15, backButton, startButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        HBox namesBox = new HBox(SPACING,
-                new VBox(5, name1Label, name1Field),
-                new VBox(5, name2Label, name2Field)
+        VBox form = MatchSettingsFactory.createForm(
+                name1Field, name2Field, goalField,
+                opponentChoiceBox, modeChoiceBox,
+                circlesCheckBox, movingBarCheckBox, speedZonesCheckBox,
+                name2Label, errorLabel, buttonBox
         );
-        namesBox.setAlignment(Pos.CENTER);
-
-        HBox goalOpponentBox = new HBox(SPACING,
-                new VBox(5, goalLabel, goalField),
-                new VBox(5, opponentLabel, opponentChoiceBox)
-        );
-        goalOpponentBox.setAlignment(Pos.CENTER);
-
-        HBox modeArenaBox = new HBox(SPACING,
-                new VBox(5, modeLabel, modeChoiceBox),
-                new VBox(5, arenaLabel, new VBox(5, circlesCheckBox, movingBarCheckBox, speedZonesCheckBox))
-        );
-        modeArenaBox.setAlignment(Pos.CENTER);
-
-        VBox form = new VBox(SPACING, namesBox, goalOpponentBox, modeArenaBox, errorLabel, buttonBox);
-        form.setAlignment(Pos.CENTER);
-        form.setMaxWidth(700);
 
         VBox root = new VBox(form);
         root.setAlignment(Pos.CENTER);
@@ -111,28 +78,7 @@ public class MatchSettingsScene { // сцена с настройками мат
         this.scene = new Scene(root, WIDTH, HEIGHT);
     }
 
-    private TextField createTextField(String prompt) {
-        TextField field = new TextField();
-        field.setPromptText(prompt);
-        field.setPrefWidth(FIELD_WIDTH);
-        field.setFont(new Font(FONT_FAMILY, FONT_SIZE));
-        return field;
-    }
 
-    private Label createLabel(String text) {
-        Label label = new Label(text);
-        label.setFont(new Font(FONT_FAMILY, FONT_SIZE));
-        label.setTextFill(Color.WHITE);
-        return label;
-    }
-
-    private <T> ChoiceBox<T> createChoiceBox(T[] values, T defaultValue) {
-        ChoiceBox<T> box = new ChoiceBox<>();
-        box.getItems().addAll(values);
-        box.setValue(defaultValue);
-        box.setPrefWidth(FIELD_WIDTH);
-        return box;
-    }
 
     private void startGame(SceneManager sceneManager) {
         String name1 = name1Field.getText().trim();
@@ -152,7 +98,7 @@ public class MatchSettingsScene { // сцена с настройками мат
         int goal = Integer.parseInt(goalText);
 
         ControlType controlType = GameControlsSettings.getPlayer2Control();
-        Arena arena = new CustomArena(GAME_WIDTH, GAME_HEIGHT, circlesCheckBox.isSelected() ? 3 : 0, movingBarCheckBox.isSelected(), speedZonesCheckBox.isSelected());
+        Arena arena = new CustomArena(GAME_WIDTH, GAME_HEIGHT, circlesCheckBox.isSelected() ? 6 : 0, movingBarCheckBox.isSelected(), speedZonesCheckBox.isSelected());
         GameConfig config = new GameConfig(GAME_WIDTH, GAME_HEIGHT, name1, player2Name, goal,opponentType, gameMode, controlType, arena);
 
         sceneManager.showGame(config);
