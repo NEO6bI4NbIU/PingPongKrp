@@ -26,6 +26,7 @@ public class ServeLogic { // логика подачи мяча
 
     public void prepareFirstServe() { // первая подача из центра поля
         ball.stop();
+        ball.resetSpeed();
         leftRacquet.reset();
         rightRacquet.reset();
 
@@ -38,6 +39,7 @@ public class ServeLogic { // логика подачи мяча
 
     public void prepareServe(int scorer) { // подача после гола
         ball.stop();
+        ball.resetSpeed();
         leftRacquet.reset();
         rightRacquet.reset();
 

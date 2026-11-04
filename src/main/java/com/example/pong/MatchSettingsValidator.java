@@ -3,11 +3,11 @@ package com.example.pong;
 public class MatchSettingsValidator { // проверка верности ввода настроек
     private static final int MAX_NAME_LENGTH = 15;
 
-    public static String validate(String name1, String name2, String goalText, GameMode mode) {
+    public static String validate(String name1, String name2, String goalText, OpponentType opponentType) {
         if (name1.isEmpty() || name1.length() > MAX_NAME_LENGTH) {
             return "Player 1 name must be 1-" + MAX_NAME_LENGTH + " characters";
         }
-        if (mode == GameMode.PVP && (name2.isEmpty() || name2.length() > MAX_NAME_LENGTH)) {
+        if (opponentType == OpponentType.PLAYER && (name2.isEmpty() || name2.length() > MAX_NAME_LENGTH)) {
             return "Player 2 name must be 1-" + MAX_NAME_LENGTH + " characters";
         }
         if (goalText.isEmpty()) {

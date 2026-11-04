@@ -7,7 +7,7 @@ import java.util.Set;
 public class BotController implements RacquetController {
 
     // ===== Параметры «сложности» =====
-    private static final double ERROR_MARGIN = 38.0;   // погрешность (пикселей)
+    private static final double ERROR_MARGIN = 35.0;   // погрешность (пикселей)
     private static final double MISTAKE_CHANCE = 0.35; // 35% шанс ошибиться сильно
     private final double fieldHeight;
     private final Random random = new Random();
