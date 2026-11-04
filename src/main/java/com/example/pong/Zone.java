@@ -4,7 +4,7 @@ import javafx.scene.shape.Rectangle;
 
 public class Zone {
     private static final double BOOST_ZONE_FACTOR = 1.3;
-    private static final double SLOW_ZONE_FACTOR = 0.75;
+    private static final double SLOW_ZONE_FACTOR = 0.83;
     private final Rectangle area;
     private final double speedFactor;
     private final boolean isPermanent; // изменениe скорости на постоянной основе - true, только внутри зоны - false

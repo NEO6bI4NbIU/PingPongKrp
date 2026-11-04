@@ -30,11 +30,12 @@ public class GameScene { // игровая сцена (сцена матча)
             root.setTranslateY((newHeight - height * scale) / 2);           надо будет реализовать возможность изменения размера окна
         }*/
 
-        for (Shape obstacle : config.getArena().getObstacles()) {
-            gameField.getChildren().add(obstacle);
-        }
+
         for (Zone zone : config.getArena().getZones()) {
             gameField.getChildren().add(zone.getArea());
+        }
+        for (Shape obstacle : config.getArena().getObstacles()) {
+            gameField.getChildren().add(obstacle);
         }
         gameField.getChildren().addAll(gameLogic.getBall().getCircle(),
                 gameLogic.getUpperWall().getRectangle(),

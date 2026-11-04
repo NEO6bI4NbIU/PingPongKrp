@@ -9,6 +9,7 @@ public class Ball { // создание мяча
     private static final Color COLOR = Color.BLUE;
     private static final double BASE_SPEED = 3.0;
     private static final double MAX_MULTIPLIER = 5.0;
+    private static final double MIN_MULTIPLIER = 0.7;
 
     private final Circle circle;
     private double dx;
@@ -34,7 +35,7 @@ public class Ball { // создание мяча
     }
 
     public void multiplySpeed(double factor) { // перемножение скоростей
-        speedMultiplier = Math.min(speedMultiplier * factor, MAX_MULTIPLIER);
+        speedMultiplier = Math.max(MIN_MULTIPLIER, Math.min(speedMultiplier * factor, MAX_MULTIPLIER));
     }
 
     public void resetSpeed() { speedMultiplier = 1.0; }
