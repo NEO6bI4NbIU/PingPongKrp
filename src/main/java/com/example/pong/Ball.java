@@ -22,9 +22,7 @@ public class Ball { // создание мяча
         this.dy = 0;
     }
 
-    public Circle getCircle() {
-        return circle;
-    }
+    public Circle getCircle() { return circle; }
 
     public void move(double deltaTime) {
         circle.setCenterX(circle.getCenterX() + dx * speedMultiplier * zoneMultiplier * deltaTime * 60);
@@ -35,13 +33,13 @@ public class Ball { // создание мяча
         speedMultiplier = Math.min(speedMultiplier + 0.1, MAX_MULTIPLIER);
     }
 
-    public void resetSpeed() {
-        speedMultiplier = 1.0;
+    public void multiplySpeed(double factor) { // перемножение скоростей
+        speedMultiplier = Math.min(speedMultiplier * factor, MAX_MULTIPLIER);
     }
 
-    public void setZoneMultiplier(double multiplier) {
-        this.zoneMultiplier = multiplier;
-    }
+    public void resetSpeed() { speedMultiplier = 1.0; }
+
+    public void setZoneMultiplier(double multiplier) { this.zoneMultiplier = multiplier; }
 
     public void bounceX() {dx = -dx;}
     public void bounceY() {dy = -dy;}

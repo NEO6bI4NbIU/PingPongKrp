@@ -103,6 +103,7 @@ public class GameLogic { // связывает все компоненты иг�
                 return;
             }
             serveLogic.prepareServe(scorer);
+            collisionSystem.resetZones();
         }
     }
 
@@ -111,6 +112,7 @@ public class GameLogic { // связывает все компоненты иг�
         gameState.reset();
         champion.reset();
         ball.resetSpeed();
+        collisionSystem.resetZones();
         arena.reset();
         serveLogic.prepareFirstServe();
         scoreboard.update(0, 0);

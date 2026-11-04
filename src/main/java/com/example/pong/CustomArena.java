@@ -42,14 +42,16 @@ public class CustomArena implements Arena {
         }
 
         // Круги
-        int circleCount = 3 + RANDOM.nextInt(Math.max(1, maxCircleCount - 2));
-        List<Circle> circles = new ArrayList<>();
-        for (int i = 0; i < circleCount; i++) {
-            Circle circle = tryCreateCircle(width, height, circles, leftRacquetX, rightRacquetX, racquetWidth);
-            if (circle != null) {
-                circle.setFill(Color.GRAY);
-                circles.add(circle);
-                obstacles.add(circle);
+        if (maxCircleCount > 0) {
+            int circleCount = 3 + RANDOM.nextInt(Math.max(1, maxCircleCount - 2));
+            List<Circle> circles = new ArrayList<>();
+            for (int i = 0; i < circleCount; i++) {
+                Circle circle = tryCreateCircle(width, height, circles, leftRacquetX, rightRacquetX, racquetWidth);
+                if (circle != null) {
+                    circle.setFill(Color.GRAY);
+                    circles.add(circle);
+                    obstacles.add(circle);
+                }
             }
         }
 
@@ -59,13 +61,25 @@ public class CustomArena implements Arena {
 
         // Зоны
         if (hasSpeedZones) {
-            Rectangle boost = new Rectangle(50, height / 2 - 50, 100, 100);
-            boost.setFill(Color.LIGHTGREEN);
-            zones.add(new Zone(boost, 1.5));
+            Rectangle boost1 = new Rectangle(width / 2 - 90 - 6.5, height / 2 - 180 - 30, 13, 180);
+            boost1.setFill(Color.LIGHTGREEN);
+            zones.add(Zone.createBoost(boost1));
 
-            Rectangle slow = new Rectangle(width - 150, height / 2 - 50, 100, 100);
-            slow.setFill(Color.LIGHTBLUE);
-            zones.add(new Zone(slow, 0.5));
+            Rectangle boost2 = new Rectangle(width / 2 + 90 - 6.5, height / 2 + 30, 13, 180);
+            boost2.setFill(Color.LIGHTGREEN);
+            zones.add(Zone.createBoost(boost2));
+
+            Rectangle boostTemp = new Rectangle(width / 2 - 20 , 0 , 40, height);
+            boostTemp.setFill(Color.GREEN);
+            zones.add(new Zone(boostTemp, 1.5, false));
+
+            Rectangle slow1 = new Rectangle(width / 4 - 150, height / 2 - 6.5 - 90, 180, 13);
+            slow1.setFill(Color.LIGHTBLUE);
+            zones.add(Zone.createSlow(slow1));
+
+            Rectangle slow2 = new Rectangle(3 * width / 4 - 30, height / 2 + 90 - 6.5, 180, 13);
+            slow2.setFill(Color.LIGHTBLUE);
+            zones.add(Zone.createSlow(slow2));
         }
     }
 
