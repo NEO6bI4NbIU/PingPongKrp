@@ -71,8 +71,8 @@ public class GameLogic { // связывает все компоненты иг�
     public void stop() { gameLoop.stop(); }
 
     public void update(double deltaTime) {
-        leftController.update(leftRacquet, ball, inputHandler.getKeysPressed());
-        rightController.update(rightRacquet, ball, inputHandler.getKeysPressed());
+        leftController.update(leftRacquet, ball, inputHandler.getKeysPressed(), deltaTime);
+        rightController.update(rightRacquet, ball, inputHandler.getKeysPressed(), deltaTime);
         if (gameState.isServing()) {
             serveLogic.handleServe(leftController, rightController, inputHandler);
             return;

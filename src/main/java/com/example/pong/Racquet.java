@@ -41,14 +41,14 @@ public class Racquet { // создание ракетки
 
     public Rectangle getRectangle() {return rectangle;}
 
-    public void moveUp() {
-        double currentSpeed = DEFAULT_SPEED * speedMultiplier;
+    public void moveUp(double deltaTime) {
+        double currentSpeed = DEFAULT_SPEED * speedMultiplier * deltaTime * 60;
         double newY = rectangle.getY() - currentSpeed;
         rectangle.setY(Math.max(newY, minY));
     }
 
-    public void moveDown() {
-        double currentSpeed = DEFAULT_SPEED * speedMultiplier;
+    public void moveDown(double deltaTime) {
+        double currentSpeed = DEFAULT_SPEED * speedMultiplier * deltaTime * 60;
         double newY = rectangle.getY() + currentSpeed;
         rectangle.setY(Math.min(newY, maxY - height));
     }

@@ -15,7 +15,7 @@ public class ScrollController implements RacquetController {
     }
 
     @Override
-    public void update(Racquet racquet, Ball ball, Set<KeyCode> keysPressed) {
+    public void update(Racquet racquet, Ball ball, Set<KeyCode> keysPressed, double deltaTime) {
         double delta = inputHandler.consumeScrollDelta();
         long now = System.currentTimeMillis();
 
@@ -23,15 +23,15 @@ public class ScrollController implements RacquetController {
             lastScrollTime = now;
             lastDirection = delta;
             if (delta > 0) {
-                racquet.moveUp();
+                racquet.moveUp(deltaTime);
             } else {
-                racquet.moveDown();
+                racquet.moveDown(deltaTime);
             }
         } else if (now - lastScrollTime < CONTINUOUS_THRESHOLD_MS && lastDirection != 0) {  // проверяет сколько времени прошло с последнего "щелчка" колёсика и направление
             if (lastDirection > 0) {
-                racquet.moveUp();
+                racquet.moveUp(deltaTime);
             } else {
-                racquet.moveDown();
+                racquet.moveDown(deltaTime);
             }
         } else {
             lastDirection = 0;

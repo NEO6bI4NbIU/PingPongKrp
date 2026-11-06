@@ -19,7 +19,7 @@ public class BotController implements RacquetController {
         this.fieldHeight = fieldHeight;
     }
     @Override
-    public void update(Racquet racquet, Ball ball, Set<KeyCode> keysPressed) {
+    public void update(Racquet racquet, Ball ball, Set<KeyCode> keysPressed, double deltaTime) {
         if (ball.getDx() == 0 && ball.getDy() == 0) {
             return;
         }
@@ -31,12 +31,12 @@ public class BotController implements RacquetController {
         }
 
         if (ballDx < 0) {
-            moveToward(racquet, fieldHeight / 2);
+            moveToward(racquet, fieldHeight / 2, deltaTime);
             return;
         }
 
         double targetY = predictBallY(ball, racquet) + errorOffset;
-        moveToward(racquet, targetY);
+        moveToward(racquet, targetY, deltaTime);
     }
 
 
@@ -68,16 +68,16 @@ public class BotController implements RacquetController {
         return predictedY;
     }
 
-    private void moveToward(Racquet racquet, double targetY) {
+    private void moveToward(Racquet racquet, double targetY, double deltaTime) {
         double currentY = racquet.getCenterY();
         double diff = targetY - currentY;
 
         if (Math.abs(diff) < 5) return;
 
         if (diff > 0) {
-            racquet.moveDown();
+            racquet.moveDown(deltaTime);
         } else {
-            racquet.moveUp();
+            racquet.moveUp(deltaTime);
         }
     }
 }

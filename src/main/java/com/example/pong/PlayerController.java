@@ -25,12 +25,12 @@ public class PlayerController implements RacquetController { // управлен
     }
 
     @Override
-    public void update(Racquet racquet, Ball ball, Set<KeyCode> keysPressed) {
+    public void update(Racquet racquet, Ball ball, Set<KeyCode> keysPressed, double deltaTime) {
         if (keysPressed.contains(upKey)) {
-            racquet.moveUp();
+            racquet.moveUp(deltaTime);
         }
         if (keysPressed.contains(downKey)) {
-            racquet.moveDown();
+            racquet.moveDown(deltaTime);
         }
     }
 }
