@@ -72,11 +72,26 @@ public class Ball { // создание мяча
         this.dy = 0;
     }
 
+    public void saveVelocity() {
+        this.savedDx = dx;
+        this.savedDy = dy;
+        this.savedMultiplier = speedMultiplier;
+    }
+
+    public void restoreVelocity() {
+        this.dx = savedDx;
+        this.dy = savedDy;
+        this.speedMultiplier = savedMultiplier;
+    }
+
+    private double savedMultiplier = 1;
+    private double savedDx = 0;
+    private double savedDy = 0;
+
     public double getCenterX() { return circle.getCenterX(); }
     public double getCenterY() { return circle.getCenterY(); }
     public double getRadius() { return RADIUS; }
     public double getDx() { return dx; }
     public double getDy() { return dy; }
-    public void setDx(double dx) { this.dx = dx; }
-    public void setDy(double dy) { this.dy = dy; }
+
 }

@@ -15,11 +15,7 @@ public class CustomArena implements Arena {
     private final List<Zone> zones = new ArrayList<>();
     private final List<MovingObstacle> movingObstacles = new ArrayList<>();
 
-    public CustomArena(double width, double height,
-                       int maxCircleCount,
-                       boolean hasMovingBar,
-                       boolean hasSpeedZones) {
-
+    public CustomArena(double width, double height, int maxCircleCount, boolean hasMovingBar, boolean hasSpeedZones) {
         double leftRacquetX = 10;
         double rightRacquetX = width - 20;
         double racquetWidth = Racquet.DEFAULT_WIDTH;
@@ -40,7 +36,6 @@ public class CustomArena implements Arena {
             bars.add(bar2);
             movingObstacles.add(new MovingObstacle(bar2, 1, 150, 0.5, width, height));
         }
-
         // Круги
         if (maxCircleCount > 0) {
             int circleCount = 3 + RANDOM.nextInt(Math.max(1, maxCircleCount - 2));
@@ -54,11 +49,9 @@ public class CustomArena implements Arena {
                 }
             }
         }
-
         for (Rectangle bar : bars) {
             obstacles.add(bar);
         }
-
         // Зоны
         if (hasSpeedZones) {
             Rectangle boost1 = new Rectangle(width / 2 - 90 - 6.5, height / 2 - 180 - 30, 13, 180);
@@ -82,20 +75,17 @@ public class CustomArena implements Arena {
             zones.add(Zone.createSlow(slow2));
         }
     }
-
     // проверка пересечения круга с остальными объектами при его создании. 20 попыток - иначе возвращает ничего
     private Circle tryCreateCircle(double width, double height, List<Circle> existing, double leftRacquetX, double rightRacquetX, double racquetWidth) {
         int maxAttempts = 20;
         double centerX = width / 2;
         double centerY = height / 2;
-
         for (int attempt = 0; attempt < maxAttempts; attempt++) {
             double radius = 20 + RANDOM.nextDouble() * 20;  // 20-40
             double x = radius + RANDOM.nextDouble() * (width - 2 * radius);
             double y = radius + RANDOM.nextDouble() * (height - 2 * radius);
 
             Circle candidate = new Circle(x, y, radius);
-
             boolean overlaps = false; // отступ от уже существующих кругов на 40 пикселей
             for (Circle other : existing) {
                 double dx = candidate.getCenterX() - other.getCenterX();
@@ -107,7 +97,6 @@ public class CustomArena implements Arena {
                 }
             }
             if (overlaps) continue;
-
             if (x - radius < leftRacquetX + racquetWidth + 20) continue; // отступ от ракеток на 20 пикселей
             if (x + radius > rightRacquetX - 20) continue;
 

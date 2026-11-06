@@ -35,12 +35,14 @@ public class ControlPanelFactory {
             case KEYBOARD -> panel.getChildren().addAll(
                     createKeyLabel("O — up"),
                     createKeyLabel("M — down"),
-                    createKeyLabel("K — serve")
+                    createKeyLabel("K — serve"),
+                    createKeyLabel("P — use card")
             );
             case SCROLL -> panel.getChildren().addAll(
                     createKeyLabel("Scroll Up — up"),
                     createKeyLabel("Scroll Down — down"),
-                    createKeyLabel("LMB — serve")
+                    createKeyLabel("LMB — serve"),
+                    createKeyLabel("RMB — use card")
             );
         }
     }

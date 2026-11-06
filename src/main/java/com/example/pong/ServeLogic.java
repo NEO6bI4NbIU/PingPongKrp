@@ -27,8 +27,8 @@ public class ServeLogic { // логика подачи мяча
     public void prepareFirstServe() { // первая подача из центра поля
         ball.stop();
         ball.resetSpeed();
-        leftRacquet.reset();
-        rightRacquet.reset();
+        leftRacquet.resetPosition();
+        rightRacquet.resetPosition();
 
         gameState.setServing(true);
         gameState.setServingPlayer(0);
@@ -40,8 +40,8 @@ public class ServeLogic { // логика подачи мяча
     public void prepareServe(int scorer) { // подача после гола
         ball.stop();
         ball.resetSpeed();
-        leftRacquet.reset();
-        rightRacquet.reset();
+        leftRacquet.resetPosition();
+        rightRacquet.resetPosition();
 
         gameState.setServing(true);
         int server = (scorer == 1) ? 2 : 1;
@@ -78,9 +78,7 @@ public class ServeLogic { // логика подачи мяча
         }
     }
 
-    public void handleServeInputByBot() {
-        launchServe();
-    }
+    public void handleServeInputByBot() { launchServe(); }
 
     private void launchServe() {
         int server = gameState.getServingPlayer();
@@ -93,5 +91,33 @@ public class ServeLogic { // логика подачи мяча
 
         ball.serve(directionX);
         gameState.setServing(false);
+        if (server == 0) {
+            gameState.setLastHitter(0);
+        } else {
+            gameState.setLastHitter(server);
+        }
+    }
+
+    public boolean handleServe(RacquetController leftController, RacquetController rightController, InputHandler inputHandler) {
+        updateBallForServe();
+        int server = gameState.getServingPlayer();
+
+        if (server == 2 && rightController instanceof ScrollController) {
+            handleServeInputByMouse();
+        } else if (server == 2 && rightController instanceof BotController) {
+            if (Math.random() < 0.02) handleServeInputByBot();
+        } else {
+            KeyCode serveKey = getServeKey(leftController, rightController);
+            if (serveKey != null) handleServeInput(serveKey);
+        }
+        return true;
+    }
+
+    private KeyCode getServeKey(RacquetController left, RacquetController right) {
+        int server = gameState.getServingPlayer();
+        if (server == 0) return KeyCode.ENTER;
+        if (server == 1 && left instanceof PlayerController p) return p.getServeKey();
+        if (server == 2 && right instanceof PlayerController p) return p.getServeKey();
+        return null;
     }
 }

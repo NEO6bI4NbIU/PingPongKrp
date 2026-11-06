@@ -27,6 +27,7 @@ public class MatchSettingsScene { // сцена с настройками мат
     private final CheckBox circlesCheckBox;
     private final CheckBox movingBarCheckBox;
     private final CheckBox speedZonesCheckBox;
+    private final CheckBox cardsCheckBox;
     private final Label errorLabel;
     private final Label name2Label;
 
@@ -41,6 +42,8 @@ public class MatchSettingsScene { // сцена с настройками мат
         circlesCheckBox = MatchSettingsFactory.createCheckBox("Circles");
         movingBarCheckBox = MatchSettingsFactory.createCheckBox("Moving Bar");
         speedZonesCheckBox = MatchSettingsFactory.createCheckBox("Speed Zones");
+        cardsCheckBox = MatchSettingsFactory.createCheckBox("Enable Cards");
+        cardsCheckBox.setSelected(true);
 
         name2Label = MatchSettingsFactory.createLabel("Player 2");
 
@@ -62,12 +65,8 @@ public class MatchSettingsScene { // сцена с настройками мат
         HBox buttonBox = new HBox(15, backButton, startButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        VBox form = MatchSettingsFactory.createForm(
-                name1Field, name2Field, goalField,
-                opponentChoiceBox, modeChoiceBox,
-                circlesCheckBox, movingBarCheckBox, speedZonesCheckBox,
-                name2Label, errorLabel, buttonBox
-        );
+        VBox form = MatchSettingsFactory.createForm(name1Field, name2Field, goalField, opponentChoiceBox, modeChoiceBox,
+                circlesCheckBox, movingBarCheckBox, speedZonesCheckBox, cardsCheckBox, name2Label, errorLabel, buttonBox);
 
         VBox root = new VBox(form);
         root.setAlignment(Pos.CENTER);
@@ -99,7 +98,7 @@ public class MatchSettingsScene { // сцена с настройками мат
 
         ControlType controlType = GameControlsSettings.getPlayer2Control();
         Arena arena = new CustomArena(GAME_WIDTH, GAME_HEIGHT, circlesCheckBox.isSelected() ? 6 : 0, movingBarCheckBox.isSelected(), speedZonesCheckBox.isSelected());
-        GameConfig config = new GameConfig(GAME_WIDTH, GAME_HEIGHT, name1, player2Name, goal,opponentType, gameMode, controlType, arena);
+        GameConfig config = new GameConfig(GAME_WIDTH, GAME_HEIGHT, name1, player2Name, goal,opponentType, gameMode, controlType, arena, cardsCheckBox.isSelected());
 
         sceneManager.showGame(config);
     }

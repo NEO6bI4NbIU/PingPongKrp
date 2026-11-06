@@ -32,6 +32,14 @@ public class SceneManager { // менеджер сцен (выполнение �
         primaryStage.show();
     }
 
+    public void showCardSelection(){
+        stopCurrentGame();
+        CardSelectionScene cards = new CardSelectionScene(this);
+        primaryStage.setTitle("Cards Selection");
+        primaryStage.setScene(cards.getScene());
+        primaryStage.show();
+    }
+
     public void showGame(GameConfig config) {
         stopCurrentGame();
         GameScene gameScene = new GameScene(config, this);

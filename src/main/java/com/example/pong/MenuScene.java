@@ -28,6 +28,8 @@ public class MenuScene { // сцена главного меню
 
         Button controlsButton = createButton("Controls", sceneManager::showControls);
 
+        Button cardsButton = createButton("Card Pool", sceneManager::showCardSelection);
+
         Button exitButton = createButton("Exit", () -> System.exit(0));
 
         VBox root = new VBox(SPACING);
@@ -35,7 +37,7 @@ public class MenuScene { // сцена главного меню
         root.setBackground(new Background(
                 new BackgroundFill(BG_COLOR, CornerRadii.EMPTY, Insets.EMPTY)
         ));
-        root.getChildren().addAll(playButton, controlsButton, exitButton);
+        root.getChildren().addAll(playButton, cardsButton, controlsButton, exitButton);
 
         this.scene = new Scene(root, WIDTH, HEIGHT);
     }

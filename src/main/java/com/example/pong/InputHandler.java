@@ -12,6 +12,7 @@ public class InputHandler { // обрабатывает ввод с клавиа
     private final Set<KeyCode> keysPressed = new HashSet<>();
     private double scrollDelta = 0;
     private boolean mouseClicked = false;
+    private boolean mouseRightClicked = false;
 
 
     public void attachTo(Scene scene) { // подключает InputHandler к Scene чтобы она ловила нажатия
@@ -21,9 +22,11 @@ public class InputHandler { // обрабатывает ввод с клавиа
 
         scene.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.PRIMARY) mouseClicked = true;
+            if (e.getButton() == MouseButton.SECONDARY) mouseRightClicked = true;
         });
         scene.setOnMouseReleased(e -> {
             if (e.getButton() == MouseButton.PRIMARY) mouseClicked = false;
+            if (e.getButton() == MouseButton.SECONDARY) mouseRightClicked = false;
         });
     }
 
@@ -43,4 +46,6 @@ public class InputHandler { // обрабатывает ввод с клавиа
 
     public boolean isMouseClicked() { return mouseClicked; }
     public void clearMouseClick() { mouseClicked = false; }
+    public boolean isMouseRightClicked() { return mouseRightClicked; }
+    public void clearMouseRightClick() { mouseRightClicked = false; }
 }
