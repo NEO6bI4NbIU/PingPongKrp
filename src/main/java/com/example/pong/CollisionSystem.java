@@ -12,7 +12,7 @@ public class CollisionSystem { // проверяет коллизии между
     private final Set<Zone> previousZones = new HashSet<>();
 
     public boolean check(Ball ball, Wall upperWall, Wall lowerWall,
-                      Racquet leftRacquet, Racquet rightRacquet, List<Shape> obstacles, List<Zone> zones) {
+                      Racquet leftRacquet, Racquet rightRacquet, List<Shape> obstacles, List<Zone> zones, GameState gameState) {
 
         boolean hitRacquet = false;
         if (collides(ball.getCircle(), upperWall.getRectangle())) {
@@ -29,32 +29,20 @@ public class CollisionSystem { // проверяет коллизии между
 
         if (ball.getDx() < 0 && collides(ball.getCircle(), leftRacquet.getRectangle())) {
             handleRacquetHit(ball, leftRacquet, true);
+            gameState.setLastHitter(1);
             hitRacquet = true;
         }
 
         if (ball.getDx() > 0 && collides(ball.getCircle(), rightRacquet.getRectangle())) {
             handleRacquetHit(ball, rightRacquet, false);
+            gameState.setLastHitter(2);
             hitRacquet = true;
         }
 
         obstacleHandler.checkObstacles(ball, obstacles);
 
-        Set<Zone> currentZones = new HashSet<>();
-        double tempZoneMultiplier = 1.0;
+        checkZones(ball, zones);
 
-        for (Zone zone : zones) {
-            if (collides(ball.getCircle(), zone.getArea())) {
-                currentZones.add(zone);
-                if (zone.isPermanent()  && !previousZones.contains(zone)) {
-                    ball.multiplySpeed(zone.getSpeedFactor());
-                }  else if (!zone.isPermanent()) {
-                    tempZoneMultiplier = zone.getSpeedFactor();
-                }
-            }
-        }
-        previousZones.clear();
-        previousZones.addAll(currentZones);
-        ball.setZoneMultiplier(tempZoneMultiplier);
         return hitRacquet;
     }
 
@@ -87,7 +75,25 @@ public class CollisionSystem { // проверяет коллизии между
         return a.intersects(b.getBoundsInLocal());
     } // проверка пересечения двух фигур
 
-    public void resetZones() {
+
+    private void checkZones(Ball ball, List<Zone> zones) {
+        Set<Zone> currentZones = new HashSet<>();
+        double tempZoneMultiplier = 1.0;
+
+        for (Zone zone : zones) {
+            if (collides(ball.getCircle(), zone.getArea())) {
+                currentZones.add(zone);
+                if (zone.isPermanent() && !previousZones.contains(zone)) {
+                    ball.multiplySpeed(zone.getSpeedFactor());
+                } else if (!zone.isPermanent()) {
+                    tempZoneMultiplier = zone.getSpeedFactor();
+                }
+            }
+        }
         previousZones.clear();
+        previousZones.addAll(currentZones);
+        ball.setZoneMultiplier(tempZoneMultiplier);
     }
+
+    public void resetZones() { previousZones.clear(); }
 }

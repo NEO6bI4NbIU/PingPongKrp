@@ -9,7 +9,8 @@ public class Racquet { // создание ракетки
     private static final double MIN_HEIGHT = 30;
     private static final double MAX_HEIGHT = 150;
     private static final Color COLOR = Color.BLACK;
-    private static final double MOVE_SPEED = 5.5;
+    private static final double DEFAULT_SPEED = 5.5;
+    private double speedMultiplier = 1.0;
 
     private final Rectangle rectangle;
     private final double minY;
@@ -27,21 +28,28 @@ public class Racquet { // создание ракетки
         this.startY = positionY;
     }
 
+    public void resetPosition() {
+        rectangle.setY(startY);
+    }
+
     public void reset() {
         rectangle.setY(startY);
         height = DEFAULT_HEIGHT;
         rectangle.setHeight(DEFAULT_HEIGHT);
+        speedMultiplier = 1.0;
     }
 
     public Rectangle getRectangle() {return rectangle;}
 
     public void moveUp() {
-        double newY = rectangle.getY() - MOVE_SPEED;
+        double currentSpeed = DEFAULT_SPEED * speedMultiplier;
+        double newY = rectangle.getY() - currentSpeed;
         rectangle.setY(Math.max(newY, minY));
     }
 
     public void moveDown() {
-        double newY = rectangle.getY() + MOVE_SPEED;
+        double currentSpeed = DEFAULT_SPEED * speedMultiplier;
+        double newY = rectangle.getY() + currentSpeed;
         rectangle.setY(Math.min(newY, maxY - height));
     }
 
@@ -60,16 +68,18 @@ public class Racquet { // создание ракетки
         rectangle.setY(newY);
     }
 
+    public void setSpeedMultiplier(double multiplier) {
+        this.speedMultiplier = Math.max(0.0, multiplier);
+    }
 
     public void increaseHeight(double delta) {setHeight(height + delta);}
 
     public void decreaseHeight(double delta) {setHeight(height - delta);}
 
-    public void resetHeight() {setHeight(DEFAULT_HEIGHT);}
-
     public double getX() { return rectangle.getX(); }
     public double getY() { return rectangle.getY(); }
+    public void setY(double y) { rectangle.setY(y); }
     public double getWidth() { return rectangle.getWidth(); }
-    public double getHeight() { return height; } // <-- возвращает поле
+    public double getHeight() { return height; } // возвращает поле
     public double getCenterY() { return rectangle.getY() + height / 2; }
 }

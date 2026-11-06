@@ -35,7 +35,8 @@ public class ControlsScene { // меню с показом клавиш упра
         VBox player1Panel = ControlPanelFactory.createPanel("Player 1",
                 "Q — up",
                 "Z — down",
-                "A — serve"
+                "A — serve",
+                "E — use card"
         );
 
         VBox player2Panel = ControlPanelFactory.createPanel("Player 2", "");

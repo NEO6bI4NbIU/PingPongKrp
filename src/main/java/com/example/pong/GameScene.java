@@ -20,7 +20,7 @@ public class GameScene { // игровая сцена (сцена матча)
         gameField.setPrefSize(width, height);
         gameField.setMinSize(width, height);
         gameField.setMaxSize(width, height);
-        this.gameLogic = new GameLogic(config, sceneManager);
+        this.gameLogic = new GameLogic(config, sceneManager, gameField);
 
         /*public void resize(double newWidth, double newHeight) {
             double scale = Math.min(newWidth / width, newHeight / height);

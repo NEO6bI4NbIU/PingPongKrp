@@ -10,8 +10,10 @@ public class GameConfig { // параметры для начала матча
     private final GameMode gameMode;
     private final ControlType controlType;
     private final Arena arena;
+    private final boolean useCards;
 
-    public GameConfig(double width, double height, String player1Name, String player2Name, int goal, OpponentType opponentType, GameMode gameMode, ControlType controlType, Arena arena) {
+    public GameConfig(double width, double height, String player1Name, String player2Name, int goal, OpponentType opponentType, GameMode gameMode,
+                      ControlType controlType, Arena arena, boolean useCards) {
         this.width = width;
         this.height = height;
         this.player1Name = player1Name;
@@ -21,6 +23,7 @@ public class GameConfig { // параметры для начала матча
         this.gameMode = gameMode;
         this.controlType = controlType;
         this.arena = arena;
+        this.useCards = useCards;
     }
 
     public double getWidth() { return width; }
@@ -32,4 +35,5 @@ public class GameConfig { // параметры для начала матча
     public GameMode getGameMode() { return gameMode; }
     public ControlType getControlType() { return controlType; }
     public Arena getArena() { return arena; }
+    public boolean isUseCards() { return useCards; }
 }

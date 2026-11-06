@@ -13,10 +13,9 @@ public class MatchSettingsFactory { // cоздание (почти)всех эл
     private static final String FONT_FAMILY = "Arial";
     private static final double FIELD_WIDTH = 400;
 
-    public static VBox createForm(
-            TextField name1Field, TextField name2Field, TextField goalField,
-            ChoiceBox<OpponentType> opponentChoiceBox, ChoiceBox<GameMode> modeChoiceBox,
-            CheckBox circlesCheckBox, CheckBox movingBarCheckBox, CheckBox speedZonesCheckBox,
+    public static VBox createForm(TextField name1Field, TextField name2Field, TextField goalField,
+            ChoiceBox<OpponentType> opponentChoiceBox, ChoiceBox<GameMode> modeChoiceBox, CheckBox circlesCheckBox,
+            CheckBox movingBarCheckBox, CheckBox speedZonesCheckBox,CheckBox cardsCheckBox,
             Label name2Label, Label errorLabel, HBox buttonBox) {
 
         HBox namesBox = new HBox(SPACING,
@@ -34,7 +33,7 @@ public class MatchSettingsFactory { // cоздание (почти)всех эл
         HBox modeArenaBox = new HBox(SPACING,
                 new VBox(5, createLabel("Mode"), modeChoiceBox),
                 new VBox(5, createLabel("Arena"),
-                        new VBox(5, circlesCheckBox, movingBarCheckBox, speedZonesCheckBox))
+                        new VBox(5, circlesCheckBox, movingBarCheckBox, speedZonesCheckBox, cardsCheckBox))
         );
         modeArenaBox.setAlignment(Pos.CENTER);
 

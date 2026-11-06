@@ -1,12 +1,11 @@
 package com.example.pong;
 
-import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 
 public class GameLogic { // связывает все компоненты игры и управляет ими
 
     private final double width;
     private final double height;
-    private final int goal;
     private boolean isArcade;
     private static final double RACQUET_MARGIN = 10;
     private final Ball ball;
@@ -26,41 +25,44 @@ public class GameLogic { // связывает все компоненты иг�
     private final Champion champion;
     private final Arena arena;
 
-    public GameLogic(GameConfig config, SceneManager sceneManager) {
+    private final CardManager cardManager;
+    private final Pane gameField;
+    private final CardController cardController;
+    private final ActiveEffectManager effectManager;
+    private final GoalHandler goalHandler;
+    private final GameRestarter restarter;
+    private final boolean useCards;
+
+    public GameLogic(GameConfig config, SceneManager sceneManager, Pane gameField) {
         this.width = config.getWidth();
         this.height = config.getHeight();
-        this.goal = config.getGoal();
         this.isArcade = (config.getGameMode() == GameMode.ARCADE);
         this.arena = config.getArena();
-        double racquetMinY = Wall.getHeight();
-        double racquetMaxY = height - Wall.getHeight();
-        double racquetStartY = height / 2 - Racquet.DEFAULT_HEIGHT / 2;
 
-        this.ball = new Ball(width / 2, height / 2);
-        this.leftRacquet = new Racquet(RACQUET_MARGIN, racquetStartY, racquetMinY, racquetMaxY);
-        this.rightRacquet = new Racquet(width - RACQUET_MARGIN - Racquet.DEFAULT_WIDTH, racquetStartY, racquetMinY, racquetMaxY);
-        this.upperWall = new Wall(0, width);
-        this.lowerWall = new Wall(height - Wall.getHeight(), width);
+        this.ball = GameObjectsFactory.createBall(width, height);
+        this.leftRacquet = GameObjectsFactory.createLeftRacquet(height);
+        this.rightRacquet = GameObjectsFactory.createRightRacquet(width, height);
+        this.upperWall = GameObjectsFactory.createUpperWall(width);
+        this.lowerWall = GameObjectsFactory.createLowerWall(width, height);
 
         this.collisionSystem = new CollisionSystem();
         this.inputHandler = new InputHandler();
-        if (config.getOpponentType() == OpponentType.BOT) {
-            this.leftController = new PlayerController(true);
-            this.rightController = new BotController(height);
-        } else {
-            this.leftController = new PlayerController(true);
-            switch (config.getControlType()) {
-                case SCROLL -> this.rightController = new ScrollController(inputHandler);
-                default -> this.rightController = new PlayerController(false);
-            }
-        }
+        this.leftController = GameObjectsFactory.createLeftController();
+        this.rightController = GameObjectsFactory.createRightController(config, inputHandler);
         this.scoreLogic = new ScoreLogic();
         this.scoreboard = new Scoreboard(config.getPlayer1Name(), config.getPlayer2Name());
         this.gameState = new GameState();
         this.gameLoop = new GameLoop(this);
         this.serveLogic = new ServeLogic(width, height, ball, leftRacquet, rightRacquet, gameState, inputHandler);
-        this.champion = new Champion(goal, scoreLogic, config.getPlayer1Name(), config.getPlayer2Name(), this::stop, this::restart, sceneManager::showMainMenu);
-
+        this.gameField = gameField;
+        this.useCards = config.isUseCards();
+        this.cardManager = new CardManager(gameState, scoreboard, gameField);
+        this.cardController = new CardController(inputHandler, this);
+        this.effectManager = new ActiveEffectManager();
+        this.restarter = new GameRestarter(scoreLogic, gameState, ball, leftRacquet, rightRacquet ,collisionSystem, arena, serveLogic, cardManager, effectManager, scoreboard, gameLoop);
+        this.champion = new Champion(config.getGoal(), scoreLogic, config.getPlayer1Name(), config.getPlayer2Name(), this::stop, () -> restarter.restart(), sceneManager::showMainMenu);
+        this.restarter.setChampion(champion);
+        this.goalHandler = new GoalHandler(scoreLogic, scoreboard, champion, serveLogic, collisionSystem, gameState, ball, width);
         serveLogic.prepareFirstServe();
     }
 
@@ -72,69 +74,47 @@ public class GameLogic { // связывает все компоненты иг�
         leftController.update(leftRacquet, ball, inputHandler.getKeysPressed());
         rightController.update(rightRacquet, ball, inputHandler.getKeysPressed());
         if (gameState.isServing()) {
-            serveLogic.updateBallForServe();
-            int server = gameState.getServingPlayer();
-            if (server == 2 && rightController instanceof ScrollController) {
-                serveLogic.handleServeInputByMouse();
-            } else if (server == 2 && rightController instanceof BotController) {
-                if (Math.random() < 0.02) {
-                    serveLogic.handleServeInputByBot();
-                }
-            } else {
-                KeyCode serveKey = getServeKey();
-                if (serveKey != null) {
-                    serveLogic.handleServeInput(serveKey);
-                }
-            }
+            serveLogic.handleServe(leftController, rightController, inputHandler);
             return;
         }
 
         ball.move(deltaTime);
         arena.update(deltaTime);
-        boolean hitRacquet = collisionSystem.check(ball, upperWall, lowerWall, leftRacquet, rightRacquet, arena.getObstacles(), arena.getZones());
-        if (hitRacquet && isArcade) {
-            ball.speedUp();
+        if (useCards) {
+            cardManager.update(deltaTime, width, height, ball);
+            cardController.update();
+            effectManager.update((long) (deltaTime * 1000), this);
         }
+        boolean hitRacquet = collisionSystem.check(ball, upperWall, lowerWall, leftRacquet, rightRacquet, arena.getObstacles(), arena.getZones(), gameState);
+        if (hitRacquet && isArcade) ball.speedUp();
 
-        int scorer = scoreLogic.update(ball, width);
-        if (scorer != 0) {
-            scoreboard.update(scoreLogic.getScore1(), scoreLogic.getScore2());
-            if (champion.check()) {
-                return;
-            }
-            serveLogic.prepareServe(scorer);
-            collisionSystem.resetZones();
-        }
+        if (goalHandler.checkGoal()) return;
     }
 
-    private void restart() {
-        scoreLogic.reset();
-        gameState.reset();
-        champion.reset();
-        ball.resetSpeed();
-        collisionSystem.resetZones();
-        arena.reset();
-        serveLogic.prepareFirstServe();
-        scoreboard.update(0, 0);
-        start();
+    public void activateCard(int player) {
+        CardType card = gameState.getPlayerCard(player);
+        if (card == null) return;
+        if (gameState.isServing() && card == CardType.FREEZE_BALL) {
+            return; // не замораживаем мяч во время подачи
+        }
+        card.apply(this, player); // применить эффект
+        gameState.setPlayerCard(player, null); // карта использована
+        effectManager.add(card, player);
+        scoreboard.setCard(player, null);
     }
 
-    private KeyCode getServeKey() {
-        int server = gameState.getServingPlayer();
+    public Racquet getRacquet(int player) {
+        return (player == 1) ? leftRacquet : rightRacquet;
+    }
 
-        if (server == 0) {
-            return KeyCode.ENTER;
-        } else if (server == 1) {
-            if (leftController instanceof PlayerController player) {
-                return player.getServeKey();
-            }
-        } else if (server == 2) {
-            if (rightController instanceof PlayerController player) {
-                return player.getServeKey();
-            }
-        }
+    public void swapRacquetPositions() {
+        double tempY = leftRacquet.getY();
+        leftRacquet.setY(rightRacquet.getY());
+        rightRacquet.setY(tempY);
+    }
 
-        return null;  // бот подает автоматически
+    public boolean isBotPlayer(int player) {
+        return player == 2 && rightController instanceof BotController;
     }
 
     public Ball getBall() { return ball; }
